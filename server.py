@@ -31,7 +31,7 @@ def delete_old_file(current_file):
             os.remove(f)
 
 
-tts = TTS(voice="gabby_reading")
+tts = TTS()
 
 
 @app.route("/convert/<api_token>/", methods=['GET'])
