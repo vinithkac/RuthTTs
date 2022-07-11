@@ -1,6 +1,6 @@
-
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 import logging
 import sys
@@ -13,13 +13,16 @@ from flask import Flask, jsonify, send_file, redirect, url_for, request
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
+
 @app.route("/", methods=['GET'])
 def index():
     return 'Home sweet home!'
 
+
 @app.route("/download/<filename>", methods=['GET'])
 def download(filename):
     return send_file(filename, as_attachment=True)
+
 
 def delete_old_file(current_file):
     files = [f for f in os.listdir('.') if os.path.isfile(f)]
@@ -27,18 +30,18 @@ def delete_old_file(current_file):
         if f.endswith('.wav') and f != current_file:
             os.remove(f)
 
+
 tts = TTS(voice="gabby_reading")
 
 
 @app.route("/convert/<api_token>/", methods=['GET'])
 def convert(api_token):
-
     ## token check
     if api_token != os.environ['API_TOKEN']:
         return jsonify({
             'error': 'Wrong API Token!'
         }), 400
-    
+
     ## voice check
     voice_name = request.args.get('voice_name')
     if not voice_name:
@@ -46,11 +49,10 @@ def convert(api_token):
             'error': 'voice_name parameter is required!'
         }), 400
 
-    if str(voice_name).lower() != "gabby":
+    if str(voice_name).lower() != "gabby_reading" or str(voice_name).lower() != "gabby_convo":
         return jsonify({
             'error': 'Invalid voice_name parameter.'
         }), 400
-
 
     ## location check
     location = request.args.get('location')
@@ -58,23 +60,21 @@ def convert(api_token):
         return jsonify({
             'error': 'location parameter is required!'
         }), 400
-        
+
     if str(location).lower() != "new-york":
         return jsonify({
             'error': 'Invalid location parameter!'
         }), 400
-    
+
     ## text check
     text = request.args.get('text')
     if not text:
         return jsonify({
             'error': 'text parameter is required!'
         }), 400
-        
-
 
     ## conversion
-    tts.generate(text)
+    tts.generate(text, voice=voice_name)
     file_name = tts.parse() + ".wav"
     ## conversion ends
 
@@ -85,10 +85,9 @@ def convert(api_token):
     download_url = url_for('download', filename=file_name)
     return "<a href='{}'>Click Here To Download</a>".format(download_url)
 
+
 @app.route("/convert/", methods=['POST'])
 def convert_post():
-
-
     try:
         body = json.loads(request.data)
     except json.JSONDecodeError:
@@ -103,19 +102,19 @@ def convert_post():
         return jsonify({
             'error': 'token is required.'
         }), 400
-    
+
     if body['token'] != os.environ['API_TOKEN']:
         return jsonify({
             'error': 'wrong api token.'
         }), 400
-    
+
     ## token check
     if 'voice_name' not in body:
         return jsonify({
             'error': 'voice_name is required.'
         }), 400
-    
-    if str(body['voice_name']).lower() != 'gabby':
+
+    if str(body['voice_name']).lower() != 'gabby_reading' or str(body['voice_name']).lower() != 'gabby_convo':
         return jsonify({
             'error': 'wrong voice_name.'
         }), 400
@@ -125,7 +124,7 @@ def convert_post():
         return jsonify({
             'error': 'location is required.'
         }), 400
-    
+
     if str(body['location']).lower() != 'new-york':
         return jsonify({
             'error': 'wrong location.'
@@ -139,7 +138,7 @@ def convert_post():
         }), 400
 
     ## conversion
-    tts.generate(text)
+    tts.generate(text, voice=body['voice_name'])
     file_name = tts.parse() + ".wav"
     ## conversion ends
 
@@ -149,6 +148,7 @@ def convert_post():
     ## send download link
     download_url = url_for('download', filename=file_name)
     return "<a href='{}'>Click Here To Download</a>".format(download_url)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
