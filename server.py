@@ -49,7 +49,7 @@ def convert(api_token):
             'error': 'voice_name parameter is required!'
         }), 400
 
-    if str(voice_name).lower() != "gabby_reading" or str(voice_name).lower() != "gabby_convo":
+    if str(voice_name).lower() != "gabby_reading" and str(voice_name).lower() != "gabby_convo":
         return jsonify({
             'error': 'Invalid voice_name parameter.'
         }), 400
@@ -114,7 +114,7 @@ def convert_post():
             'error': 'voice_name is required.'
         }), 400
 
-    if str(body['voice_name']).lower() != 'gabby_reading' or str(body['voice_name']).lower() != 'gabby_convo':
+    if str(body['voice_name']).lower() != 'gabby_reading' and str(body['voice_name']).lower() != 'gabby_convo':
         return jsonify({
             'error': 'wrong voice_name.'
         }), 400
