@@ -31,7 +31,7 @@ def delete_old_file(current_file):
             os.remove(f)
 
 
-tts = TTS()
+
 
 
 @app.route("/convert/<api_token>/", methods=['GET'])
@@ -112,4 +112,5 @@ def convert_post():
 
 
 if __name__ == "__main__":
+    tts = TTS()
     app.run(host='0.0.0.0')
