@@ -98,46 +98,6 @@ def convert_post():
         body = {}
         logger.log_uncaught_exception()
 
-    ## token check
-    if 'token' not in body:
-        return jsonify({
-            'error': 'token is required.'
-        }), 400
-
-    if body['token'] != os.environ['API_TOKEN']:
-        return jsonify({
-            'error': 'wrong api token.'
-        }), 400
-
-    ## token check
-    if 'voice_name' not in body:
-        return jsonify({
-            'error': 'voice_name is required.'
-        }), 400
-
-    if str(body['voice_name']).lower() != 'gabby_reading' and str(body['voice_name']).lower() != 'gabby_convo':
-        return jsonify({
-            'error': 'wrong voice_name.'
-        }), 400
-
-    ## location check
-    if 'location' not in body:
-        return jsonify({
-            'error': 'location is required.'
-        }), 400
-
-    if str(body['location']).lower() != 'new-york':
-        return jsonify({
-            'error': 'wrong location.'
-        }), 400
-
-    ## text check
-    text = body['text']
-    if not text:
-        return jsonify({
-            'error': 'text parameter is required!'
-        }), 400
-
     ## conversion
     tts.generate(text, voice=body['voice_name'])
     file_name = tts.parse() + ".wav"
