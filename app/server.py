@@ -99,7 +99,7 @@ def convert_post():
         logger.log_uncaught_exception()
 
     ## conversion
-    tts.generate(text, voice=body['voice_name'])
+    tts.generate(body["text"], voice=body['voice_name'])
     file_name = tts.parse() + ".wav"
     ## conversion ends
 
