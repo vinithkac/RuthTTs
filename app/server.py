@@ -12,6 +12,7 @@ from flask import Flask, jsonify, send_file, url_for, request
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+tts = TTS()
 
 
 @app.route("/", methods=['GET'])
@@ -29,9 +30,6 @@ def delete_old_file(current_file):
     for f in files:
         if f.endswith('.wav') and f != current_file:
             os.remove(f)
-
-
-
 
 
 @app.route("/convert/<api_token>/", methods=['GET'])
@@ -112,5 +110,4 @@ def convert_post():
 
 
 if __name__ == "__main__":
-    tts = TTS()
     app.run(host='0.0.0.0', port=5000)
